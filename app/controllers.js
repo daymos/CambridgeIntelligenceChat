@@ -1,18 +1,7 @@
  /* eslint-disable */
 import * as db from './db'
 import * as H from './helpers'
-import { updateDom, addOnclick } from './updateViewHelpers.js'
-
-export const addMessage = (newMsgObj) =>(
-  H.compose( 
-    db.add,
-    H.stringify,
-    H.updatedModel(newMsgObj), 
-    H.trace('parsed: '),
-    H.parse,
-    H.trace('content of ls is: ')
-           )(db.getAll())
-)
+import { updateDom, addOnclick, clearAll } from './updateViewHelpers.js'
 
 export const listAll = () => H.compose(
   updateDom, 
@@ -21,20 +10,31 @@ export const listAll = () => H.compose(
   H.parse,
 )(db.getAll())
 
+export const addMessageToModel = (newMsgObj) =>(
+  H.compose( 
+    listAll,
+    clearAll('#oldMessages'),
+    db.add,
+    H.stringify,
+    H.updatedModel(newMsgObj), 
+    H.parse,
+           )(db.getAll())
+)
 
 // newData :: void -> Object newMsg
-export const fetchData = () => (
+export const fetchDomDataAndFormat = () => (
   H.compose(
     H.newMsgObj,
   )(H.getTextFromDom('input'))
 );
 
+export const initDb = () => db.add(JSON.stringify([{time:0, text:'welcome', from: 'me'}, {time:1, text:'how are yoo today?', from: 'me'}]))
 
-export const storeInModel = () => (
+
+export const run =  () => (
   H.compose(
-    addMessage, 
-  )(fetchData())
+    addMessageToModel, 
+  )(fetchDomDataAndFormat())
 )
 
-export const initDb = () => db.add(JSON.stringify([{time:0, text:'welcome', from: 'me'}, {time:1, text:'how are yoo today?', from: 'me'}]))
 

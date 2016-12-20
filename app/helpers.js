@@ -1,4 +1,3 @@
-import $ from 'jQuery';
 
 export const compose = (...args) => value => args.reverse().reduce((acc, fn) => fn(acc), value);
 
@@ -21,7 +20,7 @@ export const genLiComponent = data => (
 );
 
 // encapsulateLiInsideUl :: String DomEl -> String DomEl
-export const encapsulateLiInsideUl = lis => `<ul>${lis}</ul>`;
+export const encapsulateLiInsideUl = lis => `<ul id='oldMessages'>${lis}</ul>`;
 
 // genUlComponent :: fn -> Functor -> Functor Object
 export const genArrayOfLiComponents = fn => data => {

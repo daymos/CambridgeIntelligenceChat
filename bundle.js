@@ -61,22 +61,13 @@
 	
 	var dom = _interopRequireWildcard(_updateViewHelpers);
 	
-	var _helpers = __webpack_require__(4);
-	
-	var H = _interopRequireWildcard(_helpers);
-	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-	
-	// listen for localStorage event and rerender all
 	
 	// onload render everything
 	window.onload = function () {
-	  // list all
-	  dom.addOnclick(ctrls.storeInModel);
+	  dom.addOnclick(ctrls.run);
 	  ctrls.initDb();
 	  ctrls.listAll();
-	  window.addEventListener('storage', console.log.bind('storage was updated'), false);
-	  console.log('loading');
 	};
 
 /***/ },
@@ -88,7 +79,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.initDb = exports.storeInModel = exports.fetchData = exports.listAll = exports.addMessage = undefined;
+	exports.run = exports.initDb = exports.fetchDomDataAndFormat = exports.addMessageToModel = exports.listAll = undefined;
 	
 	var _db = __webpack_require__(3);
 	
@@ -102,24 +93,24 @@
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
-	var addMessage = exports.addMessage = function addMessage(newMsgObj) {
-	  return H.compose(db.add, H.stringify, H.updatedModel(newMsgObj), H.trace('parsed: '), H.parse, H.trace('content of ls is: '))(db.getAll());
-	}; /* eslint-disable */
 	var listAll = exports.listAll = function listAll() {
 	  return H.compose(_updateViewHelpers.updateDom, H.encapsulateLiInsideUl, H.genArrayOfLiComponents(H.genLiComponent), H.parse)(db.getAll());
+	}; /* eslint-disable */
+	var addMessageToModel = exports.addMessageToModel = function addMessageToModel(newMsgObj) {
+	  return H.compose(listAll, (0, _updateViewHelpers.clearAll)('#oldMessages'), db.add, H.stringify, H.updatedModel(newMsgObj), H.parse)(db.getAll());
 	};
 	
 	// newData :: void -> Object newMsg
-	var fetchData = exports.fetchData = function fetchData() {
+	var fetchDomDataAndFormat = exports.fetchDomDataAndFormat = function fetchDomDataAndFormat() {
 	  return H.compose(H.newMsgObj)(H.getTextFromDom('input'));
-	};
-	
-	var storeInModel = exports.storeInModel = function storeInModel() {
-	  return H.compose(addMessage)(fetchData());
 	};
 	
 	var initDb = exports.initDb = function initDb() {
 	  return db.add(JSON.stringify([{ time: 0, text: 'welcome', from: 'me' }, { time: 1, text: 'how are yoo today?', from: 'me' }]));
+	};
+	
+	var run = exports.run = function run() {
+	  return H.compose(addMessageToModel)(fetchDomDataAndFormat());
 	};
 
 /***/ },
@@ -142,22 +133,15 @@
 
 /***/ },
 /* 4 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.trace = exports.getTextFromDom = exports.newMsgObj = exports.genArrayOfLiComponents = exports.encapsulateLiInsideUl = exports.genLiComponent = exports.parse = exports.updatedModel = exports.stringify = exports.compose = undefined;
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-	
-	var _jQuery = __webpack_require__(5);
-	
-	var _jQuery2 = _interopRequireDefault(_jQuery);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var compose = exports.compose = function compose() {
 	  for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
@@ -195,7 +179,7 @@
 	
 	// encapsulateLiInsideUl :: String DomEl -> String DomEl
 	var encapsulateLiInsideUl = exports.encapsulateLiInsideUl = function encapsulateLiInsideUl(lis) {
-	  return '<ul>' + lis + '</ul>';
+	  return '<ul id=\'oldMessages\'>' + lis + '</ul>';
 	};
 	
 	// genUlComponent :: fn -> Functor -> Functor Object
@@ -224,7 +208,59 @@
 	};
 
 /***/ },
-/* 5 */
+/* 5 */,
+/* 6 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	module.exports = function (module) {
+		if (!module.webpackPolyfill) {
+			module.deprecate = function () {};
+			module.paths = [];
+			// module.parent = undefined by default
+			module.children = [];
+			module.webpackPolyfill = 1;
+		}
+		return module;
+	};
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.clearAll = exports.updateDom = exports.addOnclick = undefined;
+	
+	var _jquery = __webpack_require__(8);
+	
+	var _jquery2 = _interopRequireDefault(_jquery);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var addOnclick = exports.addOnclick = function addOnclick(fn) {
+	  document.getElementById('send').addEventListener('click', function () {
+	    return fn();
+	  });
+	};
+	
+	// updateDom :: String Domelements -> void
+	var updateDom = exports.updateDom = function updateDom(el) {
+	  (0, _jquery2.default)('.ulcontainer').append(el);
+	};
+	
+	var clearAll = exports.clearAll = function clearAll(target) {
+	  return function () {
+	    return (0, _jquery2.default)(target).remove();
+	  };
+	};
+
+/***/ },
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module) {"use strict";
@@ -10022,51 +10058,6 @@
 		return jQuery;
 	});
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)(module)))
-
-/***/ },
-/* 6 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	module.exports = function (module) {
-		if (!module.webpackPolyfill) {
-			module.deprecate = function () {};
-			module.paths = [];
-			// module.parent = undefined by default
-			module.children = [];
-			module.webpackPolyfill = 1;
-		}
-		return module;
-	};
-
-/***/ },
-/* 7 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.updateDom = exports.addOnclick = undefined;
-	
-	var _jQuery = __webpack_require__(5);
-	
-	var _jQuery2 = _interopRequireDefault(_jQuery);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var addOnclick = exports.addOnclick = function addOnclick(fn) {
-	  (0, _jQuery2.default)('#send').click(function () {
-	    return fn();
-	  });
-	};
-	
-	// updateDom :: String Domelements -> void
-	var updateDom = exports.updateDom = function updateDom(el) {
-	  (0, _jQuery2.default)('.ulcontainer').append(el);
-	};
 
 /***/ }
 /******/ ]);
