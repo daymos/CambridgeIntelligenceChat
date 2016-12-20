@@ -1,3 +1,5 @@
+ /* eslint-disable */
+
 var path =require( 'path');
 var webpack = require('webpack');
 
@@ -6,7 +8,7 @@ module.exports = {
   entry: ['./app/index.js'],
   // output directory as an absolute path
   output: {
-    path: __dirname,
+    path: __dirname + '/dist',
     publicPath: '/',
     filename: '/bundle.js',
   },

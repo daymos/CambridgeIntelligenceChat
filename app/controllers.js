@@ -25,7 +25,6 @@ export const fetchDomDataAndFormat = () => (
   )(H.getTextFromDom('input'))
 );
 
-
 export const run = () => (
   H.compose(
     listAll,

@@ -5,7 +5,10 @@
   "main": "index.html",
   "scripts": {
     "lint": "eslint .",
-    "build": "npm run clean && webpack --env.prod && npm run copy-files"
+    "build": "npm run clean && npm run copy-files && webpack",
+    "copy-files":"cp app/index.html dist/index.html",
+    "clean": "rm -rf dist/*",
+    "dev":"webpack --watch"
   },
   "author": "Mattia Spinelli <matt.321null@gmail.com>",
   "license": "ISC",
