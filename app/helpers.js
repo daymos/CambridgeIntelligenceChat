@@ -11,13 +11,14 @@ export const updatedModel = newMsg => currentModel => currentModel.concat([newMs
 export const parse = data => JSON.parse(data);
 
 // updateView :: Object -> String DomElement
-export const genLiComponent = data => (
-  `<li>
+export const genLiComponent = data => {
+  console.log('inside genLiComponent: ',data)
+return   `<li>
   <div class='from'>from ${data.from}</div>
-  <div class='text'>${data.text}</div>
-  <div class='time'>sent at ${data.time}</div>
+  <div class='text'>${data.txt}</div>
+  <div class='time'>sent at ${new Date(data.id)}</div>
   </li>`
-);
+};
 
 // encapsulateLiInsideUl :: String DomEl -> String DomEl
 export const encapsulateLiInsideUl = lis => (

@@ -94,7 +94,7 @@
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
 	var listAll = exports.listAll = function listAll() {
-	  return H.compose(_updateViewHelpers.updateDom, H.encapsulateLiInsideUl, H.genArrayOfLiComponents(H.genLiComponent), H.trace('parsed: '), H.parse, H.trace('raw: '))(db.getAll());
+	  return H.compose(_updateViewHelpers.updateDom, H.encapsulateLiInsideUl, H.trace('list of li: '), H.genArrayOfLiComponents(H.genLiComponent), H.parse)(db.getAll());
 	}; /* eslint-disable */
 	var addMessageToModel = exports.addMessageToModel = function addMessageToModel(newMsgObj) {
 	  return H.compose(listAll, (0, _updateViewHelpers.clearAll)('#oldMessages'), db.add, H.stringify, H.updatedModel(newMsgObj), H.parse)(db.getAll());
@@ -106,7 +106,7 @@
 	};
 	
 	var initDb = exports.initDb = function initDb() {
-	  return db.add(JSON.stringify([{ time: 0, text: 'welcome', from: 'me' }, { time: 1, text: 'how are yoo today?', from: 'me' }]));
+	  return db.add(JSON.stringify([{ id: new Date(), txt: 'welcome, ', from: 'greetings AI' }, { id: new Date(), txt: 'how are you today?', from: 'greetings AI' }]));
 	};
 	
 	var run = exports.run = function run() {
@@ -174,7 +174,8 @@
 	
 	// updateView :: Object -> String DomElement
 	var genLiComponent = exports.genLiComponent = function genLiComponent(data) {
-	  return '<li>\n  <div class=\'from\'>from ' + data.from + '</div>\n  <div class=\'text\'>' + data.text + '</div>\n  <div class=\'time\'>sent at ' + data.time + '</div>\n  </li>';
+	  console.log('inside genLiComponent: ', data);
+	  return '<li>\n  <div class=\'from\'>from ' + data.from + '</div>\n  <div class=\'text\'>' + data.txt + '</div>\n  <div class=\'time\'>sent at ' + new Date(data.id) + '</div>\n  </li>';
 	};
 	
 	// encapsulateLiInsideUl :: String DomEl -> String DomEl

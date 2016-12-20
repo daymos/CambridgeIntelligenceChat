@@ -6,10 +6,9 @@ import { updateDom, addOnclick, clearAll } from './updateViewHelpers.js'
 export const listAll = () => H.compose(
   updateDom, 
   H.encapsulateLiInsideUl,
+  H.trace('list of li: '),
   H.genArrayOfLiComponents(H.genLiComponent),
-  H.trace('parsed: '),
   H.parse,
-  H.trace('raw: ')
 )(db.getAll())
 
 export const addMessageToModel = (newMsgObj) =>(
@@ -30,7 +29,7 @@ export const fetchDomDataAndFormat = () => (
   )(H.getTextFromDom('input'))
 );
 
-export const initDb = () => db.add(JSON.stringify([{time:0, text:'welcome', from: 'me'}, {time:1, text:'how are yoo today?', from: 'me'}]))
+export const initDb = () => db.add(JSON.stringify([{id: new Date(), txt:'welcome, ', from: 'greetings AI'}, {id: new Date(), txt:'how are you today?', from: 'greetings AI'}]))
 
 
 export const run =  () => (
