@@ -11,7 +11,7 @@ export const updatedModel = newMsg => currentModel => currentModel.concat([newMs
 export const parse = data => JSON.parse(data);
 
 // updateView :: Object -> String DomElement
-export const genLiComponent = data => (
+export const renderChatComment = data => (
    `<li>
   <div class='from'>from ${data.from}</div>
   <div class='text'>${data.txt}</div>
@@ -20,14 +20,14 @@ export const genLiComponent = data => (
 );
 
 // encapsulateLiInsideUl :: String DomEl -> String DomEl
-export const encapsulateLiInsideUl = lis => (
-   `<ul id='oldMessages'>${lis.join('')}</ul>`
+export const renderChatHistory = history => (
+   `<ul id='oldMessages'>${history.join('')}</ul>`
 );
 // genUlComponent :: fn -> Functor -> Functor Object
 export const genArrayOfLiComponents = fn => data => data.map(fn);
 
 // newMsgObj ::  String  -> Object
-export const newMsgObj = ( txt) => (from = 'me') =>  ({ id: Date.now(), txt, from });
+export const newMsgObj = txt => (from = 'me') => ({ id: Date.now(), txt, from });
 
 // getTextFromDom :: String  -> String
 export const getTextFromDom = target => document.getElementById(target).value;

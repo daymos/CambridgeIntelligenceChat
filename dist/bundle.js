@@ -97,7 +97,7 @@
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
 	var listAll = exports.listAll = function listAll() {
-	  return H.compose(_updateViewHelpers.updateDom, H.encapsulateLiInsideUl, H.genArrayOfLiComponents(H.genLiComponent), H.parse)(db.getAll());
+	  return H.compose(_updateViewHelpers.updateDom, H.renderChatHistory, H.genArrayOfLiComponents(H.renderChatComment), H.parse)(db.getAll());
 	};
 	
 	var addMessageToModel = exports.addMessageToModel = function addMessageToModel(newMsgObj) {
@@ -177,13 +177,13 @@
 	};
 	
 	// updateView :: Object -> String DomElement
-	var genLiComponent = exports.genLiComponent = function genLiComponent(data) {
+	var renderChatComment = exports.renderChatComment = function renderChatComment(data) {
 	   return '<li>\n  <div class=\'from\'>from ' + data.from + '</div>\n  <div class=\'text\'>' + data.txt + '</div>\n  <div class=\'time\'>sent at ' + new Date(data.id) + '</div>\n  </li>';
 	};
 	
 	// encapsulateLiInsideUl :: String DomEl -> String DomEl
-	var encapsulateLiInsideUl = exports.encapsulateLiInsideUl = function encapsulateLiInsideUl(lis) {
-	   return '<ul id=\'oldMessages\'>' + lis.join('') + '</ul>';
+	var renderChatHistory = exports.renderChatHistory = function renderChatHistory(history) {
+	   return '<ul id=\'oldMessages\'>' + history.join('') + '</ul>';
 	};
 	// genUlComponent :: fn -> Functor -> Functor Object
 	var genArrayOfLiComponents = exports.genArrayOfLiComponents = function genArrayOfLiComponents(fn) {

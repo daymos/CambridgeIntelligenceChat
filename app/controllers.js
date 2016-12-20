@@ -4,8 +4,8 @@ import { updateDom, clearAll } from './updateViewHelpers.js';
 
 export const listAll = () => H.compose(
   updateDom,
-  H.encapsulateLiInsideUl,
-  H.genArrayOfLiComponents(H.genLiComponent),
+  H.renderChatHistory,
+  H.genArrayOfLiComponents(H.renderChatComment),
   H.parse,
 )(db.getAll());
 
