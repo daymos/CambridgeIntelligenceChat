@@ -20,12 +20,11 @@ export const genLiComponent = data => (
 );
 
 // encapsulateLiInsideUl :: String DomEl -> String DomEl
-export const encapsulateLiInsideUl = lis => `<ul id='oldMessages'>${lis}</ul>`;
-
+export const encapsulateLiInsideUl = lis => (
+   `<ul id='oldMessages'>${lis.join('')}</ul>`
+);
 // genUlComponent :: fn -> Functor -> Functor Object
-export const genArrayOfLiComponents = fn => data => {
-  return data.map(fn);
-};
+export const genArrayOfLiComponents = fn => data => data.map(fn);
 
 // newMsgObj ::  String  -> Object
 export const newMsgObj = (txt, from = 'me') => ({ id: Date.now(), txt, from });

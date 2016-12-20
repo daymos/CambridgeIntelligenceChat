@@ -7,7 +7,9 @@ export const listAll = () => H.compose(
   updateDom, 
   H.encapsulateLiInsideUl,
   H.genArrayOfLiComponents(H.genLiComponent),
+  H.trace('parsed: '),
   H.parse,
+  H.trace('raw: ')
 )(db.getAll())
 
 export const addMessageToModel = (newMsgObj) =>(

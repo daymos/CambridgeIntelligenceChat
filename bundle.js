@@ -57,7 +57,7 @@
 	
 	var ctrls = _interopRequireWildcard(_controllers);
 	
-	var _updateViewHelpers = __webpack_require__(7);
+	var _updateViewHelpers = __webpack_require__(5);
 	
 	var dom = _interopRequireWildcard(_updateViewHelpers);
 	
@@ -89,12 +89,12 @@
 	
 	var H = _interopRequireWildcard(_helpers);
 	
-	var _updateViewHelpers = __webpack_require__(7);
+	var _updateViewHelpers = __webpack_require__(5);
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
 	var listAll = exports.listAll = function listAll() {
-	  return H.compose(_updateViewHelpers.updateDom, H.encapsulateLiInsideUl, H.genArrayOfLiComponents(H.genLiComponent), H.parse)(db.getAll());
+	  return H.compose(_updateViewHelpers.updateDom, H.encapsulateLiInsideUl, H.genArrayOfLiComponents(H.genLiComponent), H.trace('parsed: '), H.parse, H.trace('raw: '))(db.getAll());
 	}; /* eslint-disable */
 	var addMessageToModel = exports.addMessageToModel = function addMessageToModel(newMsgObj) {
 	  return H.compose(listAll, (0, _updateViewHelpers.clearAll)('#oldMessages'), db.add, H.stringify, H.updatedModel(newMsgObj), H.parse)(db.getAll());
@@ -179,9 +179,8 @@
 	
 	// encapsulateLiInsideUl :: String DomEl -> String DomEl
 	var encapsulateLiInsideUl = exports.encapsulateLiInsideUl = function encapsulateLiInsideUl(lis) {
-	  return '<ul id=\'oldMessages\'>' + lis + '</ul>';
+	  return '<ul id=\'oldMessages\'>' + lis.join('') + '</ul>';
 	};
-	
 	// genUlComponent :: fn -> Functor -> Functor Object
 	var genArrayOfLiComponents = exports.genArrayOfLiComponents = function genArrayOfLiComponents(fn) {
 	  return function (data) {
@@ -208,25 +207,7 @@
 	};
 
 /***/ },
-/* 5 */,
-/* 6 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	module.exports = function (module) {
-		if (!module.webpackPolyfill) {
-			module.deprecate = function () {};
-			module.paths = [];
-			// module.parent = undefined by default
-			module.children = [];
-			module.webpackPolyfill = 1;
-		}
-		return module;
-	};
-
-/***/ },
-/* 7 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -236,7 +217,7 @@
 	});
 	exports.clearAll = exports.updateDom = exports.addOnclick = undefined;
 	
-	var _jquery = __webpack_require__(8);
+	var _jquery = __webpack_require__(6);
 	
 	var _jquery2 = _interopRequireDefault(_jquery);
 	
@@ -260,7 +241,7 @@
 	};
 
 /***/ },
-/* 8 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module) {"use strict";
@@ -10057,7 +10038,24 @@
 	
 		return jQuery;
 	});
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)(module)))
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	module.exports = function (module) {
+		if (!module.webpackPolyfill) {
+			module.deprecate = function () {};
+			module.paths = [];
+			// module.parent = undefined by default
+			module.children = [];
+			module.webpackPolyfill = 1;
+		}
+		return module;
+	};
 
 /***/ }
 /******/ ]);
