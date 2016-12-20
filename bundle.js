@@ -57,7 +57,27 @@
 	
 	var ctrls = _interopRequireWildcard(_controllers);
 	
+	var _updateViewHelpers = __webpack_require__(7);
+	
+	var dom = _interopRequireWildcard(_updateViewHelpers);
+	
+	var _helpers = __webpack_require__(4);
+	
+	var H = _interopRequireWildcard(_helpers);
+	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	
+	// listen for localStorage event and rerender all
+	
+	// onload render everything
+	window.onload = function () {
+	  // list all
+	  dom.addOnclick();
+	  ctrls.initDb();
+	  ctrls.listAll();
+	
+	  console.log('loading');
+	};
 
 /***/ },
 /* 2 */
@@ -68,7 +88,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.fetchData = exports.listAll = exports.addMessage = undefined;
+	exports.initDb = exports.add = exports.fetchData = exports.listAll = exports.addMessage = undefined;
 	
 	var _db = __webpack_require__(3);
 	
@@ -76,20 +96,30 @@
 	
 	var _helpers = __webpack_require__(4);
 	
-	var help = _interopRequireWildcard(_helpers);
+	var H = _interopRequireWildcard(_helpers);
+	
+	var _updateViewHelpers = __webpack_require__(7);
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
-	/* eslint-disable */
 	var addMessage = exports.addMessage = function addMessage(newMsgObj) {
-	  return compose(dbHandler.add, help.updatedModel(newMsgObj), help.parse, db.getAll)();
+	  return H.compose(dbHandler.add, H.updatedModel(newMsgObj), H.parse, db.getAll)();
+	}; /* eslint-disable */
+	var listAll = exports.listAll = function listAll() {
+	  return H.compose(_updateViewHelpers.updateDom, H.trace('complete Ul and li'), H.encapsulateLiInsideUl, H.trace('string with multiple li elements: '), H.genArrayOfLiComponents(H.genLiComponent), H.trace('parsed: '), H.parse, H.trace('raw: '))(db.getAll());
 	};
-	
-	var listAll = exports.listAll = compose(updateDom, encapsulateLiInsideUl, genArrayOfLiComponents(genLiComponent), help.parse)(db.getAll());
 	
 	// newData :: void -> Object newMsg
 	var fetchData = exports.fetchData = function fetchData() {
-	  return compose(newMsgObj, getTextFromDom('input'))();
+	  return H.compose(newMsgObj, getTextFromDom('input'))();
+	};
+	
+	var add = exports.add = function add() {
+	  return H.compose(addMessage, fetchData);
+	};
+	
+	var initDb = exports.initDb = function initDb() {
+	  return db.add(JSON.stringify([{ time: 0, text: 'welcome', from: 'me' }]));
 	};
 
 /***/ },
@@ -103,7 +133,7 @@
 	});
 	// add :: String JSON -> undefined
 	var add = exports.add = function add(newModel) {
-	  return localStorage.setItem('chatDate', newModel);
+	  return localStorage.setItem('chatData', newModel);
 	};
 	
 	var getAll = exports.getAll = function getAll() {
@@ -119,7 +149,9 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.getTextFromDom = exports.newMsgObj = exports.genArrayOfLiComponents = exports.genLiComponent = exports.parse = exports.updatedModel = exports.stringify = exports.compose = undefined;
+	exports.trace = exports.getTextFromDom = exports.newMsgObj = exports.genArrayOfLiComponents = exports.encapsulateLiInsideUl = exports.genLiComponent = exports.parse = exports.updatedModel = exports.stringify = exports.compose = undefined;
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
 	var _jQuery = __webpack_require__(5);
 	
@@ -133,7 +165,7 @@
 	  }
 	
 	  return function (value) {
-	    return args.reduce(function (acc, fn) {
+	    return args.reverse().reduce(function (acc, fn) {
 	      return fn(acc);
 	    }, value);
 	  };
@@ -153,13 +185,19 @@
 	
 	// parse :: String -> Object
 	var parse = exports.parse = function parse(data) {
-	  return JSON.stringify(data);
+	  return JSON.parse(data);
 	};
 	
 	// updateView :: Object -> String DomElement
 	var genLiComponent = exports.genLiComponent = function genLiComponent(data) {
-	  return '<li>\n  <div class=\'from\'>from ' + data.from + '</div>\n  <div class=\'text\'>' + data.text + '</div>\n  <div class=\'time\'>at ' + data.time + '</div>\n  </li>';
+	  return '<li>\n  <div class=\'from\'>from ' + data.from + '</div>\n  <div class=\'text\'>' + data.text + '</div>\n  <div class=\'time\'>sent at ' + data.time + '</div>\n  </li>';
 	};
+	
+	// encapsulateLiInsideUl :: String DomEl -> String DomEl
+	var encapsulateLiInsideUl = exports.encapsulateLiInsideUl = function encapsulateLiInsideUl(lis) {
+	  return '<ul>' + lis + '</ul>';
+	};
+	
 	// genUlComponent :: fn -> Functor -> Functor Object
 	var genArrayOfLiComponents = exports.genArrayOfLiComponents = function genArrayOfLiComponents(fn) {
 	  return function (data) {
@@ -176,6 +214,13 @@
 	// getTextFromDom :: String  -> String
 	var getTextFromDom = exports.getTextFromDom = function getTextFromDom(target) {
 	  return $('#' + target).val();
+	};
+	
+	var trace = exports.trace = function trace(msg) {
+	  return function (val) {
+	    console.log(msg, val, typeof val === 'undefined' ? 'undefined' : _typeof(val));
+	    return val;
+	  };
 	};
 
 /***/ },
@@ -9993,6 +10038,36 @@
 			module.webpackPolyfill = 1;
 		}
 		return module;
+	};
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.updateDom = exports.addOnclick = undefined;
+	
+	var _jQuery = __webpack_require__(5);
+	
+	var _jQuery2 = _interopRequireDefault(_jQuery);
+	
+	var _controllers = __webpack_require__(2);
+	
+	var _controllers2 = _interopRequireDefault(_controllers);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var addOnclick = exports.addOnclick = function addOnclick() {
+	  (0, _jQuery2.default)('.send').click(_controllers2.default);
+	};
+	
+	// updateDom :: String Domelements -> void
+	var updateDom = exports.updateDom = function updateDom(el) {
+	  (0, _jQuery2.default)('.ulcontainer').append(el);
 	};
 
 /***/ }

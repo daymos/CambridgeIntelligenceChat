@@ -1,6 +1,6 @@
 import * as $ from 'jQuery';
 
-export const compose = (...args) => value => args.reduce((acc, fn) => fn(acc), value);
+export const compose = (...args) => value => args.reverse().reduce((acc, fn) => fn(acc), value);
 
 // stringify ::  Object -> String
 export const stringify = data => JSON.stringify(data);
@@ -9,23 +9,33 @@ export const stringify = data => JSON.stringify(data);
 export const updatedModel = newMsg => currentModel => Object.assign(currentModel, newMsg);
 
 // parse :: String -> Object
-export const parse = data => JSON.stringify(data);
+export const parse = data => JSON.parse(data);
 
 // updateView :: Object -> String DomElement
 export const genLiComponent = data => (
   `<li>
   <div class='from'>from ${data.from}</div>
   <div class='text'>${data.text}</div>
-  <div class='time'>at ${data.time}</div>
+  <div class='time'>sent at ${data.time}</div>
   </li>`
 );
-// genUlComponent :: fn -> Functor -> Functor Object
-export const genArrayOfLiComponents = fn => data => data.map(fn);
 
+// encapsulateLiInsideUl :: String DomEl -> String DomEl
+export const encapsulateLiInsideUl = lis => `<ul>${lis}</ul>`;
+
+// genUlComponent :: fn -> Functor -> Functor Object
+export const genArrayOfLiComponents = fn => data => {
+  return data.map(fn);
+};
 
 // newMsgObj ::  String  -> Object
 export const newMsgObj = (txt, from = 'me') => ({ id: Date.now(), txt, from });
 
 // getTextFromDom :: String  -> String
 export const getTextFromDom = target => $(`#${target}`).val();
+
+export const trace =(msg) =>  (val) => {
+  console.log(msg, val, typeof val);
+  return val;
+};
 

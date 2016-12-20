@@ -1,27 +1,43 @@
  /* eslint-disable */
 import * as db from './db'
-import * as help from './helpers'
+import * as H from './helpers'
+import { updateDom, addOnclick } from './updateViewHelpers.js'
 
 export const addMessage = (newMsgObj) =>(
-  compose( 
+  H.compose( 
     dbHandler.add,
-    help.updatedModel(newMsgObj), 
-    help.parse,
+    H.updatedModel(newMsgObj), 
+    H.parse,
     db.getAll)()
 )
 
-export const listAll = compose(
-  updateDom, 
-  encapsulateLiInsideUl,
-  genArrayOfLiComponents(genLiComponent),
-  help.parse,
+export const listAll = () => H.compose(
+   updateDom, 
+  H.trace('complete Ul and li'),
+  H.encapsulateLiInsideUl,
+  H.trace('string with multiple li elements: '),
+  H.genArrayOfLiComponents(H.genLiComponent),
+  H.trace('parsed: '),
+  H.parse,
+  H.trace('raw: '),
 )(db.getAll())
 
 
 // newData :: void -> Object newMsg
 export const fetchData = () => (
-  compose(
+  H.compose(
     newMsgObj,
     getTextFromDom('input')
   )()
 );
+
+
+export const add = () => (
+  H.compose(
+    addMessage, 
+    fetchData 
+  )
+)
+
+export const initDb = () => db.add(JSON.stringify([{time:0, text:'welcome', from: 'me'}]))
+
