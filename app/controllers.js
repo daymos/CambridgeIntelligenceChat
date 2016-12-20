@@ -15,14 +15,12 @@ export const addMessageToModel = (newMsgObj) => (
     H.stringify,
     H.updatedModel(newMsgObj),
     H.parse,
-           )(db.getAll())
+  )(db.getAll())
 );
 
 // newData :: void -> Object newMsg
 export const fetchDomDataAndFormat = () => (
-  H.compose(
-    H.newMsgObj,
-  )(H.getTextFromDom('input'))
+  H.newMsgObj(H.getTextFromDom('input'))()
 );
 
 export const run = () => (

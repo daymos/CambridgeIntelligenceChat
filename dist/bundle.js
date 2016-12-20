@@ -106,7 +106,7 @@
 	
 	// newData :: void -> Object newMsg
 	var fetchDomDataAndFormat = exports.fetchDomDataAndFormat = function fetchDomDataAndFormat() {
-	  return H.compose(H.newMsgObj)(H.getTextFromDom('input'));
+	  return H.newMsgObj(H.getTextFromDom('input'))();
 	};
 	
 	var run = exports.run = function run() {
@@ -194,8 +194,10 @@
 	
 	// newMsgObj ::  String  -> Object
 	var newMsgObj = exports.newMsgObj = function newMsgObj(txt) {
-	   var from = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'me';
-	   return { id: Date.now(), txt: txt, from: from };
+	   return function () {
+	      var from = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'me';
+	      return { id: Date.now(), txt: txt, from: from };
+	   };
 	};
 	
 	// getTextFromDom :: String  -> String

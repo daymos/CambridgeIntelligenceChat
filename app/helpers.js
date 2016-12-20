@@ -27,7 +27,7 @@ export const encapsulateLiInsideUl = lis => (
 export const genArrayOfLiComponents = fn => data => data.map(fn);
 
 // newMsgObj ::  String  -> Object
-export const newMsgObj = (txt, from = 'me') => ({ id: Date.now(), txt, from });
+export const newMsgObj = ( txt) => (from = 'me') =>  ({ id: Date.now(), txt, from });
 
 // getTextFromDom :: String  -> String
 export const getTextFromDom = target => document.getElementById(target).value;
