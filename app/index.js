@@ -7,9 +7,9 @@ import * as H from './helpers';
 // onload render everything
 window.onload = () => {
   // list all
-  dom.addOnclick();
+  dom.addOnclick(ctrls.storeInModel);
   ctrls.initDb();
   ctrls.listAll();
-
+  window.addEventListener('storage', console.log.bind('storage was updated'), false);
   console.log('loading')
 };

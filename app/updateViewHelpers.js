@@ -1,9 +1,8 @@
 import $ from 'jQuery';
-import add from './controllers';
 
-export const addOnclick = () => {
-  $('.send').click(add);
-};
+export const addOnclick = (fn) => {
+  $('#send').click(() =>fn())
+}
 
 // updateDom :: String Domelements -> void
 export const updateDom = (el) => {

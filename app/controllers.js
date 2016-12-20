@@ -5,39 +5,36 @@ import { updateDom, addOnclick } from './updateViewHelpers.js'
 
 export const addMessage = (newMsgObj) =>(
   H.compose( 
-    dbHandler.add,
+    db.add,
+    H.stringify,
     H.updatedModel(newMsgObj), 
+    H.trace('parsed: '),
     H.parse,
-    db.getAll)()
+    H.trace('content of ls is: ')
+           )(db.getAll())
 )
 
 export const listAll = () => H.compose(
-   updateDom, 
-  H.trace('complete Ul and li'),
+  updateDom, 
   H.encapsulateLiInsideUl,
-  H.trace('string with multiple li elements: '),
   H.genArrayOfLiComponents(H.genLiComponent),
-  H.trace('parsed: '),
   H.parse,
-  H.trace('raw: '),
 )(db.getAll())
 
 
 // newData :: void -> Object newMsg
 export const fetchData = () => (
   H.compose(
-    newMsgObj,
-    getTextFromDom('input')
-  )()
+    H.newMsgObj,
+  )(H.getTextFromDom('input'))
 );
 
 
-export const add = () => (
+export const storeInModel = () => (
   H.compose(
     addMessage, 
-    fetchData 
-  )
+  )(fetchData())
 )
 
-export const initDb = () => db.add(JSON.stringify([{time:0, text:'welcome', from: 'me'}]))
+export const initDb = () => db.add(JSON.stringify([{time:0, text:'welcome', from: 'me'}, {time:1, text:'how are yoo today?', from: 'me'}]))
 

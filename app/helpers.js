@@ -1,4 +1,4 @@
-import * as $ from 'jQuery';
+import $ from 'jQuery';
 
 export const compose = (...args) => value => args.reverse().reduce((acc, fn) => fn(acc), value);
 
@@ -6,7 +6,7 @@ export const compose = (...args) => value => args.reverse().reduce((acc, fn) => 
 export const stringify = data => JSON.stringify(data);
 
 // updateModel :: (Object, Object) -> Object
-export const updatedModel = newMsg => currentModel => Object.assign(currentModel, newMsg);
+export const updatedModel = newMsg => currentModel => currentModel.concat([newMsg]);
 
 // parse :: String -> Object
 export const parse = data => JSON.parse(data);
@@ -32,9 +32,9 @@ export const genArrayOfLiComponents = fn => data => {
 export const newMsgObj = (txt, from = 'me') => ({ id: Date.now(), txt, from });
 
 // getTextFromDom :: String  -> String
-export const getTextFromDom = target => $(`#${target}`).val();
+export const getTextFromDom = target => document.getElementById(target).value;
 
-export const trace =(msg) =>  (val) => {
+export const trace =(msg) => (val) => {
   console.log(msg, val, typeof val);
   return val;
 };

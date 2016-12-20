@@ -72,10 +72,10 @@
 	// onload render everything
 	window.onload = function () {
 	  // list all
-	  dom.addOnclick();
+	  dom.addOnclick(ctrls.storeInModel);
 	  ctrls.initDb();
 	  ctrls.listAll();
-	
+	  window.addEventListener('storage', console.log.bind('storage was updated'), false);
 	  console.log('loading');
 	};
 
@@ -88,7 +88,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.initDb = exports.add = exports.fetchData = exports.listAll = exports.addMessage = undefined;
+	exports.initDb = exports.storeInModel = exports.fetchData = exports.listAll = exports.addMessage = undefined;
 	
 	var _db = __webpack_require__(3);
 	
@@ -103,23 +103,23 @@
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
 	var addMessage = exports.addMessage = function addMessage(newMsgObj) {
-	  return H.compose(dbHandler.add, H.updatedModel(newMsgObj), H.parse, db.getAll)();
+	  return H.compose(db.add, H.stringify, H.updatedModel(newMsgObj), H.trace('parsed: '), H.parse, H.trace('content of ls is: '))(db.getAll());
 	}; /* eslint-disable */
 	var listAll = exports.listAll = function listAll() {
-	  return H.compose(_updateViewHelpers.updateDom, H.trace('complete Ul and li'), H.encapsulateLiInsideUl, H.trace('string with multiple li elements: '), H.genArrayOfLiComponents(H.genLiComponent), H.trace('parsed: '), H.parse, H.trace('raw: '))(db.getAll());
+	  return H.compose(_updateViewHelpers.updateDom, H.encapsulateLiInsideUl, H.genArrayOfLiComponents(H.genLiComponent), H.parse)(db.getAll());
 	};
 	
 	// newData :: void -> Object newMsg
 	var fetchData = exports.fetchData = function fetchData() {
-	  return H.compose(newMsgObj, getTextFromDom('input'))();
+	  return H.compose(H.newMsgObj)(H.getTextFromDom('input'));
 	};
 	
-	var add = exports.add = function add() {
-	  return H.compose(addMessage, fetchData);
+	var storeInModel = exports.storeInModel = function storeInModel() {
+	  return H.compose(addMessage)(fetchData());
 	};
 	
 	var initDb = exports.initDb = function initDb() {
-	  return db.add(JSON.stringify([{ time: 0, text: 'welcome', from: 'me' }]));
+	  return db.add(JSON.stringify([{ time: 0, text: 'welcome', from: 'me' }, { time: 1, text: 'how are yoo today?', from: 'me' }]));
 	};
 
 /***/ },
@@ -155,9 +155,9 @@
 	
 	var _jQuery = __webpack_require__(5);
 	
-	var $ = _interopRequireWildcard(_jQuery);
+	var _jQuery2 = _interopRequireDefault(_jQuery);
 	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var compose = exports.compose = function compose() {
 	  for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
@@ -179,7 +179,7 @@
 	// updateModel :: (Object, Object) -> Object
 	var updatedModel = exports.updatedModel = function updatedModel(newMsg) {
 	  return function (currentModel) {
-	    return Object.assign(currentModel, newMsg);
+	    return currentModel.concat([newMsg]);
 	  };
 	};
 	
@@ -213,7 +213,7 @@
 	
 	// getTextFromDom :: String  -> String
 	var getTextFromDom = exports.getTextFromDom = function getTextFromDom(target) {
-	  return $('#' + target).val();
+	  return document.getElementById(target).value;
 	};
 	
 	var trace = exports.trace = function trace(msg) {
@@ -10055,14 +10055,12 @@
 	
 	var _jQuery2 = _interopRequireDefault(_jQuery);
 	
-	var _controllers = __webpack_require__(2);
-	
-	var _controllers2 = _interopRequireDefault(_controllers);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var addOnclick = exports.addOnclick = function addOnclick() {
-	  (0, _jQuery2.default)('.send').click(_controllers2.default);
+	var addOnclick = exports.addOnclick = function addOnclick(fn) {
+	  (0, _jQuery2.default)('#send').click(function () {
+	    return fn();
+	  });
 	};
 	
 	// updateDom :: String Domelements -> void
