@@ -1,10 +1,9 @@
 import * as ctrls from './controllers';
 import * as dom from './updateViewHelpers';
+import * as db from './db';
 
-
-// onload render everything
 window.onload = () => {
   dom.addOnclick(ctrls.run);
-  ctrls.initDb();
+  db.initDb();
   ctrls.listAll();
 };

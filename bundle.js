@@ -61,12 +61,15 @@
 	
 	var dom = _interopRequireWildcard(_updateViewHelpers);
 	
+	var _db = __webpack_require__(3);
+	
+	var db = _interopRequireWildcard(_db);
+	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
-	// onload render everything
 	window.onload = function () {
 	  dom.addOnclick(ctrls.run);
-	  ctrls.initDb();
+	  db.initDb();
 	  ctrls.listAll();
 	};
 
@@ -79,7 +82,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.run = exports.initDb = exports.fetchDomDataAndFormat = exports.addMessageToModel = exports.listAll = undefined;
+	exports.run = exports.fetchDomDataAndFormat = exports.addMessageToModel = exports.listAll = undefined;
 	
 	var _db = __webpack_require__(3);
 	
@@ -94,10 +97,11 @@
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
 	var listAll = exports.listAll = function listAll() {
-	  return H.compose(_updateViewHelpers.updateDom, H.encapsulateLiInsideUl, H.trace('list of li: '), H.genArrayOfLiComponents(H.genLiComponent), H.parse)(db.getAll());
-	}; /* eslint-disable */
+	  return H.compose(_updateViewHelpers.updateDom, H.encapsulateLiInsideUl, H.genArrayOfLiComponents(H.genLiComponent), H.parse)(db.getAll());
+	};
+	
 	var addMessageToModel = exports.addMessageToModel = function addMessageToModel(newMsgObj) {
-	  return H.compose(listAll, (0, _updateViewHelpers.clearAll)('#oldMessages'), db.add, H.stringify, H.updatedModel(newMsgObj), H.parse)(db.getAll());
+	  return H.compose(db.add, H.stringify, H.updatedModel(newMsgObj), H.parse)(db.getAll());
 	};
 	
 	// newData :: void -> Object newMsg
@@ -105,12 +109,8 @@
 	  return H.compose(H.newMsgObj)(H.getTextFromDom('input'));
 	};
 	
-	var initDb = exports.initDb = function initDb() {
-	  return db.add(JSON.stringify([{ id: new Date(), txt: 'welcome, ', from: 'greetings AI' }, { id: new Date(), txt: 'how are you today?', from: 'greetings AI' }]));
-	};
-	
 	var run = exports.run = function run() {
-	  return H.compose(addMessageToModel)(fetchDomDataAndFormat());
+	  return H.compose(listAll, (0, _updateViewHelpers.clearAll)('#oldMessages'), addMessageToModel)(fetchDomDataAndFormat());
 	};
 
 /***/ },
@@ -130,6 +130,10 @@
 	var getAll = exports.getAll = function getAll() {
 	  return localStorage.getItem('chatData');
 	};
+	
+	var initDb = exports.initDb = function initDb() {
+	  return add(JSON.stringify([{ id: new Date(), txt: 'welcome, ', from: 'greetings AI' }, { id: new Date(), txt: 'how are you today?', from: 'greetings AI' }]));
+	};
 
 /***/ },
 /* 4 */
@@ -138,73 +142,72 @@
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+	   value: true
 	});
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
 	var compose = exports.compose = function compose() {
-	  for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	    args[_key] = arguments[_key];
-	  }
+	   for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	   }
 	
-	  return function (value) {
-	    return args.reverse().reduce(function (acc, fn) {
-	      return fn(acc);
-	    }, value);
-	  };
+	   return function (value) {
+	      return args.reverse().reduce(function (acc, fn) {
+	         return fn(acc);
+	      }, value);
+	   };
 	};
 	
 	// stringify ::  Object -> String
 	var stringify = exports.stringify = function stringify(data) {
-	  return JSON.stringify(data);
+	   return JSON.stringify(data);
 	};
 	
 	// updateModel :: (Object, Object) -> Object
 	var updatedModel = exports.updatedModel = function updatedModel(newMsg) {
-	  return function (currentModel) {
-	    return currentModel.concat([newMsg]);
-	  };
+	   return function (currentModel) {
+	      return currentModel.concat([newMsg]);
+	   };
 	};
 	
 	// parse :: String -> Object
 	var parse = exports.parse = function parse(data) {
-	  return JSON.parse(data);
+	   return JSON.parse(data);
 	};
 	
 	// updateView :: Object -> String DomElement
 	var genLiComponent = exports.genLiComponent = function genLiComponent(data) {
-	  console.log('inside genLiComponent: ', data);
-	  return '<li>\n  <div class=\'from\'>from ' + data.from + '</div>\n  <div class=\'text\'>' + data.txt + '</div>\n  <div class=\'time\'>sent at ' + new Date(data.id) + '</div>\n  </li>';
+	   return '<li>\n  <div class=\'from\'>from ' + data.from + '</div>\n  <div class=\'text\'>' + data.txt + '</div>\n  <div class=\'time\'>sent at ' + new Date(data.id) + '</div>\n  </li>';
 	};
 	
 	// encapsulateLiInsideUl :: String DomEl -> String DomEl
 	var encapsulateLiInsideUl = exports.encapsulateLiInsideUl = function encapsulateLiInsideUl(lis) {
-	  return '<ul id=\'oldMessages\'>' + lis.join('') + '</ul>';
+	   return '<ul id=\'oldMessages\'>' + lis.join('') + '</ul>';
 	};
 	// genUlComponent :: fn -> Functor -> Functor Object
 	var genArrayOfLiComponents = exports.genArrayOfLiComponents = function genArrayOfLiComponents(fn) {
-	  return function (data) {
-	    return data.map(fn);
-	  };
+	   return function (data) {
+	      return data.map(fn);
+	   };
 	};
 	
 	// newMsgObj ::  String  -> Object
 	var newMsgObj = exports.newMsgObj = function newMsgObj(txt) {
-	  var from = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'me';
-	  return { id: Date.now(), txt: txt, from: from };
+	   var from = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'me';
+	   return { id: Date.now(), txt: txt, from: from };
 	};
 	
 	// getTextFromDom :: String  -> String
 	var getTextFromDom = exports.getTextFromDom = function getTextFromDom(target) {
-	  return document.getElementById(target).value;
+	   return document.getElementById(target).value;
 	};
 	
 	var trace = exports.trace = function trace(msg) {
-	  return function (val) {
-	    console.log(msg, val, typeof val === 'undefined' ? 'undefined' : _typeof(val));
-	    return val;
-	  };
+	   return function (val) {
+	      console.log(msg, val, typeof val === 'undefined' ? 'undefined' : _typeof(val));
+	      return val;
+	   };
 	};
 
 /***/ },
@@ -225,14 +228,13 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var addOnclick = exports.addOnclick = function addOnclick(fn) {
-	  document.getElementById('send').addEventListener('click', function () {
+	  return (0, _jquery2.default)('#send').click(function () {
 	    return fn();
 	  });
 	};
 	
-	// updateDom :: String Domelements -> void
 	var updateDom = exports.updateDom = function updateDom(el) {
-	  (0, _jquery2.default)('.ulcontainer').append(el);
+	  return (0, _jquery2.default)('.ulcontainer').append(el);
 	};
 	
 	var clearAll = exports.clearAll = function clearAll(target) {
